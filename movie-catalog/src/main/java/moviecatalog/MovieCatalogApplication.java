@@ -12,6 +12,6 @@ public class MovieCatalogApplication {
 	
 	}
 
-	//test
+	//testing
 	
 }
