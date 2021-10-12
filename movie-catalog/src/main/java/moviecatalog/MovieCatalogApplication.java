@@ -12,4 +12,21 @@ public class MovieCatalogApplication {
 	
 	}
 	
+//	@Configuration
+//	public class PersistenceConfig {
+//
+//		@Bean
+//		public DataSource dataSource(){
+//		    return
+//		        (new EmbeddedDatabaseBuilder())
+//		        .addScript("director.sql")
+//		        .addScript("rating.sql")
+//		        .addScript("movie.sql")
+//		        .addScript("movie_director.sql")
+//		        .addScript("test_insert.sql")
+//		        .build();
+//		}
+//		
+//	}
+	
 }

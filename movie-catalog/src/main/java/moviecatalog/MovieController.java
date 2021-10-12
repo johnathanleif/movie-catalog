@@ -91,7 +91,7 @@ public class MovieController {
 	}
 	
 	@PostMapping
-	public Movie saveNewMovie(@Valid @RequestBody Movie movie) {		
+	public Movie saveNewMovie(@Valid @RequestBody Movie movie) {
 		return repository.save(movie);
 	}
 	
