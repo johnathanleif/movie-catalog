@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.validation.Valid;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,12 +25,10 @@ public class Movie {
 	private Integer id;
 	private String title;
 	
-	@Valid
 	@ManyToOne(cascade = CascadeType.MERGE)		//MERGE allows new Movies to join to Ratings by ID only
 	@JoinColumn(name = "rating_id")
 	private Rating rating;
 	
-	@Valid
 	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(
 		name = "movie_director",
