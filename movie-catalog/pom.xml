@@ -74,6 +74,7 @@
     <sourceDirectory>src</sourceDirectory>
     
     <plugins>
+    
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
@@ -90,7 +91,9 @@
 		    </annotationProcessorPaths>
         </configuration>
       </plugin>  
+      
     </plugins>
+    
   </build>
   
 </project>
