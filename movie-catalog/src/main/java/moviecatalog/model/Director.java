@@ -10,6 +10,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Movie Director entity.
+ * 
+ * @author johnathanleif
+ * 
+ * */
 @Entity
 @Table(name = "director")
 @Data @NoArgsConstructor @AllArgsConstructor

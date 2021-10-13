@@ -17,6 +17,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * Movie entity.
+ * 
+ * @author johnathanleif
+ * 
+ * */
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
 public class Movie {

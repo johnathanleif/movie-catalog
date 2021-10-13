@@ -13,6 +13,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Movie Rating entity.
+ * 
+ * @author johnathanleif
+ * 
+ * */
 @Entity
 @Table(uniqueConstraints= @UniqueConstraint(columnNames={"symbol"}))
 @Data @NoArgsConstructor @AllArgsConstructor
