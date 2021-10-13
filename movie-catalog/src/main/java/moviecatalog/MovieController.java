@@ -34,7 +34,7 @@ import moviecatalog.repository.RatingRepository;
 public class MovieController {
 
 	@Autowired
-	private MovieRepository repository;	
+	private MovieRepository movieRepository;	
 	@Autowired
 	private RatingRepository ratingRepository;
 	@Autowired
@@ -43,48 +43,48 @@ public class MovieController {
 	
 	@GetMapping
 	public Iterable<Movie> findAllMovies() {
-		return repository.findAll();
+		return movieRepository.findAll();
 	}
 	
 	@GetMapping("/{id}")
 	public Optional<Movie> findMovieById(@PathVariable int id) {
-		return repository.findById(id);
+		return movieRepository.findById(id);
 	}
 	
 	@RequestMapping(path = "/search", params = "director-name")
 	public Iterable<Movie> findAllMoviesByDirectorName(@RequestParam("director-name") String name) {
 		Iterable<Director> directors = directorRepository.findAllByNameContains(name);
-		return repository.findAllByDirectorsIn(directors);
+		return movieRepository.findAllByDirectorsIn(directors);
 	}
 	
 	@RequestMapping(path = "/search", params = "director-name-contains")
 	public Iterable<Movie> findAllMoviesByDirectorNameContains(@RequestParam("director-name-contains") String nameQuery) {
 		Iterable<Director> directors = directorRepository.findAllByNameContains(nameQuery);
-		return repository.findAllByDirectorsIn(directors);
+		return movieRepository.findAllByDirectorsIn(directors);
 	}
 	
 	@RequestMapping(path = "/search", params = "director-name-starts-with")
 	public Iterable<Movie> findAllMoviesByDirectorNameStartsWith(@RequestParam("director-name-starts-with") String nameQuery) {
 		Iterable<Director> directors = directorRepository.findAllByNameContains(nameQuery);
-		return repository.findAllByDirectorsIn(directors);
+		return movieRepository.findAllByDirectorsIn(directors);
 	}
 	
 	@RequestMapping(path = "/search", params = "director-name-ends-with")
 	public Iterable<Movie> findAllMoviesByDirectorNameEndsWith(@RequestParam("director-name-ends-with") String nameQuery) {
 		Iterable<Director> directors = directorRepository.findAllByNameContains(nameQuery);
-		return repository.findAllByDirectorsIn(directors);
+		return movieRepository.findAllByDirectorsIn(directors);
 	}
 	
 	@RequestMapping(path = "/search", params = "rating")
 	public Iterable<Movie> findAllMoviesByRating(@RequestParam("rating") String symbol) {
-		return repository.findAllByRatingSymbol(symbol);
+		return movieRepository.findAllByRatingSymbol(symbol);
 	}
 	
 	@RequestMapping(path = "/search", params = "rated-above")
 	public Iterable<Movie> findAllMoviesByRatingGreaterThan(@RequestParam("rated-above") String symbol) {
 		Optional<Rating> rating = ratingRepository.findBySymbol(symbol);
 		if(rating.isPresent()) {
-			return repository.findAllByRatingAgeLimitGreaterThan(rating.get().getAgeLimit());
+			return movieRepository.findAllByRatingAgeLimitGreaterThan(rating.get().getAgeLimit());
 		} else {
 			return Collections.emptySet();
 		}
@@ -92,18 +92,28 @@ public class MovieController {
 	
 	@PostMapping
 	public Movie saveNewMovie(@Valid @RequestBody Movie movie) {
-		return repository.save(movie);
+		if(movie.getRating() != null && movie.getRating().getId() == null) {
+			ratingRepository.save(movie.getRating());
+		}
+		if(movie.getDirectors() != null) {
+			for(Director director: movie.getDirectors()) {
+				if(director.getId() == null) {
+					directorRepository.save(director);
+				}
+			} 
+		}
+		return movieRepository.save(movie);
 	}
 	
 	@PutMapping("/{id}")
 	public Movie saveMovie(@RequestBody Movie movie, @PathVariable int id) {
-		return repository.findById(id).map(mov -> {
+		return movieRepository.findById(id).map(mov -> {
 			mov.setId(id);
 			mov.setTitle(movie.getTitle());
-			return repository.save(mov);
+			return movieRepository.save(mov);
 		}).orElseGet(() -> {
 			movie.setId(id);
-			return repository.save(movie);
+			return movieRepository.save(movie);
 		});
 	}
 	

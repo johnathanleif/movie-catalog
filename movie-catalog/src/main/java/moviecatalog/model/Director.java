@@ -9,15 +9,15 @@ import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
 @Table(name = "director")
 @Data @NoArgsConstructor @AllArgsConstructor
 public class Director {
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@ToString.Exclude private int id;
+	@Id 
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 	private String name;
 	
 }

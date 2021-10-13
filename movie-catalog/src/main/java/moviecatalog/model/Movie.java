@@ -17,23 +17,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
 public class Movie {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@ToString.Exclude private int id;
+	private Integer id;
 	private String title;
 	
 	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.MERGE)		//MERGE allows new Movies to join to Ratings by ID only
 	@JoinColumn(name = "rating_id")
 	private Rating rating;
 	
 	@Valid
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(
 		name = "movie_director",
 		joinColumns = {@JoinColumn(name = "movie_id")},
