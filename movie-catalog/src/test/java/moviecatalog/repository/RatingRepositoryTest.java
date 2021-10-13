@@ -36,7 +36,8 @@ public class RatingRepositoryTest {
 	    savedRating.setAgeLimit(UPDATE_AGE_LIMIT);
 	    repository.save(savedRating);
 	    
-	    assertNotEquals(repository.findById(savedRating.getId()).get(), rating);
+	    assertNotEquals(repository.findById(savedRating.getId()).get().getSymbol(), rating.getSymbol());
+	    assertNotEquals(repository.findById(savedRating.getId()).get().getAgeLimit(), rating.getAgeLimit());
 		assertEquals(repository.findById(savedRating.getId()).get(), savedRating);
 	}
 	
