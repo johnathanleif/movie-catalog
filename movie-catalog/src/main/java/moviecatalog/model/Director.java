@@ -23,7 +23,7 @@ public class Director {
 
 	@Id 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	private String name;
+	private Integer id = null;
+	private String name = null;
 	
 }

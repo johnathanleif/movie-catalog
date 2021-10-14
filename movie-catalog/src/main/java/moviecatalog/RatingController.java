@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import moviecatalog.model.Movie;
 import moviecatalog.model.Rating;
+import moviecatalog.repository.MovieRepository;
 import moviecatalog.repository.RatingRepository;
 
 /**
@@ -36,6 +39,9 @@ public class RatingController {
 	
 	@Autowired
 	private RatingRepository repository;
+	
+	@Autowired
+	private MovieRepository movieRepository;
 	
 	/**
 	 * GET the list of Ratings using URI "/ratings"
@@ -91,6 +97,21 @@ public class RatingController {
 			rating.setId(id);
 			return repository.save(rating);
 		});
+	}
+	
+	/**
+	 * DELETE the Rating with ID using URI "/ratings/{ID}"
+	 * */
+	@DeleteMapping("/{id}")
+	public void deleteRating(@PathVariable int id) {
+		Optional<Rating> rating = repository.findById(id);
+		if(rating.isPresent()) {
+			Iterable<Movie> movies = movieRepository.findAllByRatingId(id);
+			for(Movie movie: movies) {
+				movie.setRating(null);		//remove join
+			}
+			repository.delete(rating.get());
+		}
 	}
 	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

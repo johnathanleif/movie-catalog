@@ -5,6 +5,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import moviecatalog.model.Director;
+import moviecatalog.model.Movie;
 import moviecatalog.repository.DirectorRepository;
+import moviecatalog.repository.MovieRepository;
 
 /**
  * Rest Controller for CRUD operations on Directors to the catalog.
@@ -29,6 +32,9 @@ public class DirectorController {
 	
 	@Autowired
 	private DirectorRepository repository;
+	
+	@Autowired
+	private MovieRepository movieRepository;
 	
 	/**
 	 * GET the list of Directors using URI "/directors"
@@ -107,6 +113,22 @@ public class DirectorController {
 			director.setId(id);
 			return repository.save(director);
 		});
+	}
+	
+	
+	/**
+	 * DELETE the Director with ID using URI "/directors/{ID}"
+	 * */
+	@DeleteMapping("/{id}")
+	public void deleteDirector(@PathVariable int id) {
+		Optional<Director> director = repository.findById(id);
+		if(director.isPresent()) {
+			Iterable<Movie> movies = movieRepository.findAllByDirectorsId(id);
+			for(Movie movie: movies) {
+				movie.getDirectors().remove(director.get());		//remove join
+			}
+			repository.deleteById(id);
+		}
 	}
 
 }

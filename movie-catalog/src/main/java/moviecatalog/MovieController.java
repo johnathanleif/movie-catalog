@@ -2,8 +2,10 @@ package moviecatalog;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,6 +66,14 @@ public class MovieController {
 	}
 	
 	/**
+	 * GET the list of Movies by Directors by ID using URI "/movies/search?director-id={id}"
+	 * */
+	@RequestMapping(path = "/search", params = "director-id")
+	public Iterable<Movie> findAllMoviesByDirectorName(@RequestParam("director-id") int id) {
+		return movieRepository.findAllByDirectorsId(id);
+	}
+	
+	/**
 	 * GET the list of Movies by Directors by name using URI "/movies/search?director-name={name}"
 	 * */
 	@RequestMapping(path = "/search", params = "director-name")
@@ -99,10 +110,18 @@ public class MovieController {
 	}
 	
 	/**
+	 * GET the list of Movies by Ratings by ID using URI "/movies/search?rating-id={ID}"
+	 * */
+	@RequestMapping(path = "/search", params = "rating-id")
+	public Iterable<Movie> findAllMoviesByRatingId(@RequestParam("rating-id") int id) {
+		return movieRepository.findAllByRatingId(id);
+	}
+	
+	/**
 	 * GET the list of Movies by Ratings by symbol using URI "/movies/search?rating={symbol}"
 	 * */
 	@RequestMapping(path = "/search", params = "rating")
-	public Iterable<Movie> findAllMoviesByRating(@RequestParam("rating") String symbol) {
+	public Iterable<Movie> findAllMoviesByRatingSymbol(@RequestParam("rating") String symbol) {
 		return movieRepository.findAllByRatingSymbol(symbol);
 	}
 	
@@ -127,14 +146,16 @@ public class MovieController {
 	 * 		{"title": "Title", "rating": {"symbol": "SYMBOL", "ageLimit": 18}, "directors": [{"name": "Director Name"}, {"name": "Named Director"}]} 
 	 * for movies with new Ratings and Directors (or a combination).
 	 * 
-	 * If given IDs for Ratings or Directors does not exist an exception is thrown. Ratings or Directors with existing IDs will not be updated from this request.
+	 * If given IDs for Ratings or Directors does not exist an they are ignored. Ratings or Directors with existing IDs will not be updated from this request.
 	 * 
 	 * Movie ID is generated even if ID included as a property.
 	 * 
 	 * */
 	@PostMapping
 	public Movie saveNewMovie(@Valid @RequestBody Movie movie) {
+		mergeJoinedEntities(movie);			//spring handling entity cascading inconsistently for PUT and POST so do manually
 		persistNewJoinedEntities(movie);
+		
 		return movieRepository.save(movie);
 	}
 	
@@ -146,22 +167,24 @@ public class MovieController {
 	 * 		{"title": "Title", "rating": {"symbol": "SYMBOL", "ageLimit": 18}, "directors": [{"name": "Director Name"}, {"name": "Named Director"}]} 
 	 * for movies with new Ratings and Directors (or a combination).
 	 * 
-	 * If given IDs for Ratings or Directors does not exist an exception is thrown. Ratings or Directors with existing IDs will not be updated from this request.
+	 * If given IDs for Ratings or Directors does not exist they are ignored. Ratings or Directors with existing IDs will not be updated from this request.
 	 * 
 	 * */
 	@PutMapping("/{id}")
 	public Movie saveMovie(@Valid @RequestBody Movie movie, @PathVariable int id) {
+		mergeJoinedEntities(movie);			//spring handling entity cascading inconsistently for PUT and POST so do manually
 		persistNewJoinedEntities(movie);
-		return movieRepository.findById(id).map(mov -> {
-			mov.setId(id);
-			mov.setTitle(movie.getTitle());
-			mov.setRating(movie.getRating());
-			mov.setDirectors(movie.getDirectors());
-			return movieRepository.save(mov);
-		}).orElseGet(() -> {
-			movie.setId(id);
-			return movieRepository.save(movie);
-		});
+
+		movie.setId(id);		
+		return movieRepository.save(movie);
+	}
+	
+	/**
+	 * DELETE the Movie with ID using URI "/movies/{ID}"
+	 * */
+	@DeleteMapping("/{id}")
+	public void deleteMovie(@PathVariable int id) {
+		movieRepository.deleteById(id);
 	}
 	
 	private void persistNewJoinedEntities(final Movie movie) {
@@ -169,11 +192,34 @@ public class MovieController {
 			ratingRepository.save(movie.getRating());
 		}
 		if(movie.getDirectors() != null) {
-			for(Director director: movie.getDirectors()) {
-				if(director.getId() == null) {
-					directorRepository.save(director);
+			for(Director dir: movie.getDirectors()) {
+				if(dir.getId() == null) {
+					directorRepository.save(dir);
 				}
 			} 
+		}
+	}
+	
+	private void mergeJoinedEntities(final Movie movie) {
+		if(movie.getRating() != null && movie.getRating().getId() != null) {
+			Optional<Rating> rating = ratingRepository.findById(movie.getRating().getId());
+			if(rating.isPresent()) {
+				movie.setRating(rating.get());
+			}
+		}
+		if(movie.getDirectors() != null) {
+			Set<Director> directors = new HashSet<>();
+			for(Director dir: movie.getDirectors()) {
+				if(dir.getId() != null) {
+					Optional<Director> director = directorRepository.findById(dir.getId());
+					if(director.isPresent()) {
+						directors.add(director.get());
+					}
+				} else {
+					directors.add(dir);		//keep new directors without IDs for persistance
+				}
+			}
+			movie.setDirectors(directors);		//alternative to using a proper iterator to remove during loop
 		}
 	}
 	
