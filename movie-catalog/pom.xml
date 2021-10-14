@@ -5,9 +5,7 @@
 	<artifactId>movie-catalog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-
 	<dependencies>
-  
 		<!-- Spring Boot -->
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
@@ -72,12 +70,11 @@
 		    <artifactId>springfox-boot-starter</artifactId>
 		    <version>3.0.0</version>
 		</dependency>
-		
+	
 	</dependencies>
   
-  
 	<build>
-    
+	
 	    <plugins>
 	    
 			<plugin>
@@ -116,6 +113,5 @@
 	    </plugins>
     
 	</build>
-  
   
 </project>
