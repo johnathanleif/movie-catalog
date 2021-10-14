@@ -11,29 +11,31 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.validation.Valid;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
+/**
+ * Movie entity.
+ * 
+ * @author johnathanleif
+ * 
+ * */
 @Entity
 @Data @NoArgsConstructor @AllArgsConstructor
 public class Movie {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@ToString.Exclude private int id;
+	private Integer id;
 	private String title;
 	
-	@Valid
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne(cascade = CascadeType.MERGE)		//MERGE allows new Movies to join to entities by ID only
 	@JoinColumn(name = "rating_id")
 	private Rating rating;
 	
-	@Valid
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.MERGE)
 	@JoinTable(
 		name = "movie_director",
 		joinColumns = {@JoinColumn(name = "movie_id")},
