@@ -6,10 +6,8 @@ import org.springframework.stereotype.Repository;
 import moviecatalog.model.Director;
 import moviecatalog.model.Movie;
 import moviecatalog.model.Rating;
-import springfox.documentation.annotations.ApiIgnore;
 
 @Repository
-@ApiIgnore
 public interface MovieRepository extends CrudRepository<Movie, Integer> {
 
 	/**
