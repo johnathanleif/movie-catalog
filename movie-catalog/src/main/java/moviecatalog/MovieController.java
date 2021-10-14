@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import moviecatalog.model.Director;
 import moviecatalog.model.Movie;
 import moviecatalog.model.Rating;
@@ -40,6 +42,8 @@ import moviecatalog.repository.RatingRepository;
  * */
 @RestController
 @RequestMapping("/movies")
+@Api(tags = {"Movie Service"})
+@Tag(name = "Movie Service", description = "Movie List API")
 public class MovieController {
 
 	@Autowired
@@ -66,71 +70,71 @@ public class MovieController {
 	}
 	
 	/**
-	 * GET the list of Movies by Directors by ID using URI "/movies/search?director-id={id}"
+	 * GET the list of Movies by Directors by ID using URI "/movies/search-director-id?query={id}"
 	 * */
-	@RequestMapping(path = "/search", params = "director-id")
-	public Iterable<Movie> findAllMoviesByDirectorName(@RequestParam("director-id") int id) {
-		return movieRepository.findAllByDirectorsId(id);
+	@GetMapping(path = "/search-director-id")
+	public Iterable<Movie> findAllMoviesByDirectorName(@RequestParam int query) {
+		return movieRepository.findAllByDirectorsId(query);
 	}
 	
 	/**
-	 * GET the list of Movies by Directors by name using URI "/movies/search?director-name={name}"
+	 * GET the list of Movies by Directors by name using URI "/movies/search-director-name?query={name}"
 	 * */
-	@RequestMapping(path = "/search", params = "director-name")
-	public Iterable<Movie> findAllMoviesByDirectorName(@RequestParam("director-name") String name) {
-		Iterable<Director> directors = directorRepository.findAllByNameContains(name);
+	@GetMapping(path = "/search-director-name")
+	public Iterable<Movie> findAllMoviesByDirectorName(@RequestParam("director-name") String query) {
+		Iterable<Director> directors = directorRepository.findAllByNameContains(query);
 		return movieRepository.findAllByDirectorsIn(directors);
 	}
 	
 	/**
-	 * GET the list of Movies by Directors by partial name using URI "/movies/search?director-name-contains={partial name}"
+	 * GET the list of Movies by Directors by partial name using URI "/movies/search-director-name-contains?query={partial name}"
 	 * */
-	@RequestMapping(path = "/search", params = "director-name-contains")
-	public Iterable<Movie> findAllMoviesByDirectorNameContains(@RequestParam("director-name-contains") String nameQuery) {
-		Iterable<Director> directors = directorRepository.findAllByNameContains(nameQuery);
+	@GetMapping(path = "/search-director-name-contains")
+	public Iterable<Movie> findAllMoviesByDirectorNameContains(@RequestParam String query) {
+		Iterable<Director> directors = directorRepository.findAllByNameContains(query);
 		return movieRepository.findAllByDirectorsIn(directors);
 	}
 	
 	/**
-	 * GET the list of Movies by Directors by start of name using URI "/movies/search?director-name-starts-with={start of name}"
+	 * GET the list of Movies by Directors by start of name using URI "/movies/search-director-name-starts-with?query={start of name}"
 	 * */
-	@RequestMapping(path = "/search", params = "director-name-starts-with")
-	public Iterable<Movie> findAllMoviesByDirectorNameStartsWith(@RequestParam("director-name-starts-with") String nameQuery) {
-		Iterable<Director> directors = directorRepository.findAllByNameContains(nameQuery);
+	@GetMapping(path = "/search-director-name-starts-with")
+	public Iterable<Movie> findAllMoviesByDirectorNameStartsWith(@RequestParam String query) {
+		Iterable<Director> directors = directorRepository.findAllByNameContains(query);
 		return movieRepository.findAllByDirectorsIn(directors);
 	}
 	
 	/**
-	 * GET the list of Movies by Directors by end of name using URI "/movies/search?director-name-ends-with={end of name}"
+	 * GET the list of Movies by Directors by end of name using URI "/movies/search-director-name-ends-with?query={end of name}"
 	 * */
-	@RequestMapping(path = "/search", params = "director-name-ends-with")
-	public Iterable<Movie> findAllMoviesByDirectorNameEndsWith(@RequestParam("director-name-ends-with") String nameQuery) {
-		Iterable<Director> directors = directorRepository.findAllByNameContains(nameQuery);
+	@GetMapping(path = "/search-director-name-ends-with")
+	public Iterable<Movie> findAllMoviesByDirectorNameEndsWith(@RequestParam String query) {
+		Iterable<Director> directors = directorRepository.findAllByNameContains(query);
 		return movieRepository.findAllByDirectorsIn(directors);
 	}
 	
 	/**
 	 * GET the list of Movies by Ratings by ID using URI "/movies/search?rating-id={ID}"
 	 * */
-	@RequestMapping(path = "/search", params = "rating-id")
-	public Iterable<Movie> findAllMoviesByRatingId(@RequestParam("rating-id") int id) {
-		return movieRepository.findAllByRatingId(id);
+	@GetMapping(path = "/search-rating-id")
+	public Iterable<Movie> findAllMoviesByRatingId(@RequestParam int query) {
+		return movieRepository.findAllByRatingId(query);
 	}
 	
 	/**
-	 * GET the list of Movies by Ratings by symbol using URI "/movies/search?rating={symbol}"
+	 * GET the list of Movies by Ratings by symbol using URI "/movies/search-rating?query={symbol}"
 	 * */
-	@RequestMapping(path = "/search", params = "rating")
-	public Iterable<Movie> findAllMoviesByRatingSymbol(@RequestParam("rating") String symbol) {
-		return movieRepository.findAllByRatingSymbol(symbol);
+	@GetMapping(path = "/search-rating")
+	public Iterable<Movie> findAllMoviesByRatingSymbol(@RequestParam String query) {
+		return movieRepository.findAllByRatingSymbol(query);
 	}
 	
 	/**
-	 * GET the list of Movies above Rating by symbol using URI "/movies/search?rated-above={symbol}"
+	 * GET the list of Movies above Rating by symbol using URI "/movies/search-rated-above?query={symbol}"
 	 * */
-	@RequestMapping(path = "/search", params = "rated-above")
-	public Iterable<Movie> findAllMoviesByRatingGreaterThan(@RequestParam("rated-above") String symbol) {
-		Optional<Rating> rating = ratingRepository.findBySymbol(symbol);
+	@GetMapping(path = "/search-rated-above")
+	public Iterable<Movie> findAllMoviesByRatingGreaterThan(@RequestParam("rated-above") String query) {
+		Optional<Rating> rating = ratingRepository.findBySymbol(query);
 		if(rating.isPresent()) {
 			return movieRepository.findAllByRatingAgeLimitGreaterThan(rating.get().getAgeLimit());
 		} else {

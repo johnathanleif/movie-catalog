@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import moviecatalog.model.Movie;
 import moviecatalog.model.Rating;
 import moviecatalog.repository.MovieRepository;
@@ -35,6 +37,8 @@ import moviecatalog.repository.RatingRepository;
  * */
 @RestController
 @RequestMapping("ratings")
+@Api(tags = {"Rating Service"})
+@Tag(name = "Rating Service", description = "Rating List API")
 public class RatingController {
 	
 	@Autowired
@@ -62,7 +66,7 @@ public class RatingController {
 	/**
 	 * GET the list of Ratings by symbol using URI "/ratings/search?symbol={symbol}"
 	 * */
-	@RequestMapping(path = "/search", params = "symbol")
+	@GetMapping(path = "/search-symbol")
 	public Optional<Rating> findRatingBySymbol(@RequestParam String symbol) {
 		return repository.findBySymbol(symbol);
 	}

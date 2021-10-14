@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import moviecatalog.model.Director;
 import moviecatalog.model.Movie;
 import moviecatalog.repository.DirectorRepository;
@@ -25,9 +27,11 @@ import moviecatalog.repository.MovieRepository;
  * 
  * @author johnathanleif
  * 
- * */
+ * */	
 @RestController
 @RequestMapping("directors")
+@Api(tags = {"Director Service"})
+@Tag(name = "Director Service", description = "Director List API")
 public class DirectorController {
 	
 	@Autowired
@@ -53,35 +57,35 @@ public class DirectorController {
 	}
 	
 	/**
-	 * GET the list of Directors by name using URI "/directors/search?name={name}"
+	 * GET the list of Directors by name using URI "/directors/search-name-equals?query={name}"
 	 * */
-	@RequestMapping(path = "/search", params = "name")
-	public Iterable<Director> findAllDirectorsByName(@RequestParam String name) {
-		return repository.findAllByName(name);
+	@GetMapping(path = "/search-name-equals")
+	public Iterable<Director> findAllDirectorsByName(@RequestParam String query) {
+		return repository.findAllByName(query);
 	}
 	
 	/**
-	 * GET the list of Directors by partial name using URI "/directors/search?name-contains={partial name}"
+	 * GET the list of Directors by partial name using URI "/directors/search-name-contains?query={partial name}"
 	 * */
-	@RequestMapping(path = "/search", params = "name-contains")
-	public Iterable<Director> findAllDirectorsByNameContains(@RequestParam(name = "name-contains") String nameQuery) {
-		return repository.findAllByNameContains(nameQuery);
+	@GetMapping(path = "/search-name-contains")
+	public Iterable<Director> findAllDirectorsByNameContains(@RequestParam String query) {
+		return repository.findAllByNameContains(query);
 	}
 	
 	/**
-	 * GET the list of Directors by start of name using URI "/directors/search?name-starts-with={start of name}"
+	 * GET the list of Directors by start of name using URI "/directors/search-name-starts-with?query={start of name}"
 	 * */
-	@RequestMapping(path = "/search", params = "name-starts-with")
-	public Iterable<Director> findAllDirectorsByNameStartsWith(@RequestParam(name = "name-starts-with") String nameQuery) {
-		return repository.findAllByNameStartsWith(nameQuery);
+	@GetMapping(path = "/search-name-starts-with")
+	public Iterable<Director> findAllDirectorsByNameStartsWith(@RequestParam String query) {
+		return repository.findAllByNameStartsWith(query);
 	}
 	
 	/**
-	 * GET the list of Directors by end of name using URI "/directors/search?name-ends-with={end of name}"
+	 * GET the list of Directors by end of name using URI "/directors/search-name-ends-with?query={end of name}"
 	 * */
-	@RequestMapping(path = "/search", params = "name-ends-with")
-	public Iterable<Director> findAllDirectorsByNameEndsWith(@RequestParam(name = "name-ends-with") String nameQuery) {
-		return repository.findAllByNameEndsWith(nameQuery);
+	@GetMapping(path = "/search-name-ends-with")
+	public Iterable<Director> findAllDirectorsByNameEndsWith(@RequestParam String query) {
+		return repository.findAllByNameEndsWith(query);
 	}
 	
 	/**
