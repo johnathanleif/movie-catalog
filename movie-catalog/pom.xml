@@ -64,7 +64,15 @@
 		    <version>2.2</version>
 		    <scope>test</scope>
 		</dependency>
-
+		
+		<!-- Documentation -->
+		<!-- Spring Fox Swagger UI -->
+		<dependency>
+		    <groupId>io.springfox</groupId>
+		    <artifactId>springfox-boot-starter</artifactId>
+		    <version>3.0.0</version>
+		</dependency>
+		
 	</dependencies>
   
   
