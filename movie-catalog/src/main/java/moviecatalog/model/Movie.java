@@ -31,7 +31,7 @@ public class Movie {
 	private Integer id;
 	private String title;
 	
-	@ManyToOne(cascade = CascadeType.MERGE)		//MERGE allows new Movies to join to Ratings by ID only
+	@ManyToOne(cascade = CascadeType.MERGE)		//MERGE allows new Movies to join to entities by ID only
 	@JoinColumn(name = "rating_id")
 	private Rating rating;
 	
