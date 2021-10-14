@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS rating (
   id int NOT NULL AUTO_INCREMENT,
   symbol varchar(10) NOT NULL,
   age_limit tinyint NOT NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  UNIQUE INDEX (symbol)
 );
 
 CREATE TABLE IF NOT EXISTS movie (
