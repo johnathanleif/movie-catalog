@@ -1,5 +1,7 @@
 # Movie Catalog
 
+Created in 1 week as part of a skills test.
+
 ## System Requirements
 
 Java 1.8 or higher.
